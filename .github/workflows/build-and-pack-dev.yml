@@ -14,10 +14,11 @@ jobs:
         name: 'Continuous Integration pipeline'
         runs-on: 'windows-latest'
         env:
-            DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-            DOTNET_CLI_TELEMETRY_OPTOUT: 1
             BUILD_VERSION: 1.0.0
             BUILD_VERSION_SUFFIX: gha-10000
+            DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+            DOTNET_CLI_TELEMETRY_OPTOUT: 1
+            USERNAME: ${{ github.event.repository.owner.name }}
         steps:
             - uses: actions/checkout@master
             - name: Initialize
@@ -29,8 +30,7 @@ jobs:
             - name: Restore NuGet packages
               run: dotnet restore "src\OrchardCore\OrchardCore\OrchardCore.csproj" /nodeReuse:false
             - name: Build solution
-              shell: powershell
-              run: dotnet build "src\OrchardCore\OrchardCore\OrchardCore.csproj" --configuration Release --version-suffix $env:BUILD_VERSION_SUFFIX --no-restore /nodeReuse:false
+              run: dotnet build "src\OrchardCore\OrchardCore\OrchardCore.csproj" --configuration Release --version-suffix ${BUILD_VERSION_SUFFIX} --no-restore /nodeReuse:false
 #            - name: Run tests
 #              run: |
 #                dotnet test .\test\OrchardCore.Tests\OrchardCore.Tests.csproj --configuration Release --no-build
@@ -38,8 +38,6 @@ jobs:
 #                test-setup.cmd
 #                test-run.cmd
             - name: Package solution
-              shell: powershell
-              run: dotnet pack "src\OrchardCore\OrchardCore\OrchardCore.csproj" --version-suffix $env:BUILD_VERSION_SUFFIX --configuration Release --output build --no-build /nodeReuse:false
+              run: dotnet pack "src\OrchardCore\OrchardCore\OrchardCore.csproj" --version-suffix ${BUILD_VERSION_SUFFIX} --configuration Release --output build --no-build /nodeReuse:false
             - name: Publish packages
-              shell: powershell
-              run: dotnet nuget push "build\OrchardCore.$($env:BUILD_VERSION)-$($env:BUILD_VERSION_SUFFIX).nupkg" --source "https://nuget.pkg.github.com/${{ github.event.repository.owner.name }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }}
+              run: dotnet nuget push "build\OrchardCore.${BUILD_VERSION}-${BUILD_VERSION_SUFFIX}.nupkg" --source "https://nuget.pkg.github.com/${USERNAME}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }}
