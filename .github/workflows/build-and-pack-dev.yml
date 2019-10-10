@@ -22,7 +22,7 @@ jobs:
         steps:
             - uses: actions/checkout@master
             - name: Install nuget
-              uses: warrenbuckley/Setup-Nuget@master
+              uses: warrenbuckley/Setup-Nuget@v1
             - name: Initialize
               run: |
                 echo .NET Core & dotnet --version & echo.
