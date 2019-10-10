@@ -16,6 +16,7 @@ jobs:
         env:
             DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
             DOTNET_CLI_TELEMETRY_OPTOUT: 1
+            BUILD_VERSION_SUFFIX: 1.0.0-gha-10001
         steps:
             - uses: actions/checkout@master
             - name: Initialize
@@ -25,9 +26,10 @@ jobs:
                 echo NPM & npm version & echo.
                 git config --global core.autocrlf true
             - name: Restore NuGet packages
-              run: dotnet restore
+              run: dotnet restore "src\OrchardCore\OrchardCore\OrchardCore.csproj" /nodeReuse:false
             - name: Build solution
-              run: dotnet build --configuration Release --no-restore
+              shell: powershell
+              run: dotnet build "src\OrchardCore\OrchardCore\OrchardCore.csproj" --configuration Release --versionsuffix $env:BUILD_VERSION_SUFFIX --no-restore /nodeReuse:false
 #            - name: Run tests
 #              run: |
 #                dotnet test .\test\OrchardCore.Tests\OrchardCore.Tests.csproj --configuration Release --no-build
@@ -35,6 +37,8 @@ jobs:
 #                test-setup.cmd
 #                test-run.cmd
             - name: Package solution
-              run: dotnet pack --configuration Release --output build --no-build
+              shell: powershell
+              run: dotnet pack "src\OrchardCore\OrchardCore\OrchardCore.csproj" --versionsuffix $env:BUILD_VERSION_SUFFIX --configuration Release --output build --no-build /nodeReuse:false
             - name: Publish packages
-              run: dotnet nuget push "build\OrchardCore.1.0.0-rc1.nupkg" --source "https://nuget.pkg.github.com/${{ github.repository }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }}
+              shell: powershell
+              run: dotnet nuget push "build\OrchardCore.$($env:BUILD_VERSION_SUFFIX).nupkg" --source "https://nuget.pkg.github.com/${{ github.event.repository.owner.name }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }}
