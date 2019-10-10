@@ -29,7 +29,7 @@ jobs:
               run: dotnet restore "src\OrchardCore\OrchardCore\OrchardCore.csproj" /nodeReuse:false
             - name: Build solution
               shell: powershell
-              run: dotnet build "src\OrchardCore\OrchardCore\OrchardCore.csproj" --configuration Release --versionsuffix $env:BUILD_VERSION_SUFFIX --no-restore /nodeReuse:false
+              run: dotnet build "src\OrchardCore\OrchardCore\OrchardCore.csproj" --configuration Release --version-suffix $env:BUILD_VERSION_SUFFIX --no-restore /nodeReuse:false
 #            - name: Run tests
 #              run: |
 #                dotnet test .\test\OrchardCore.Tests\OrchardCore.Tests.csproj --configuration Release --no-build
@@ -38,7 +38,7 @@ jobs:
 #                test-run.cmd
             - name: Package solution
               shell: powershell
-              run: dotnet pack "src\OrchardCore\OrchardCore\OrchardCore.csproj" --versionsuffix $env:BUILD_VERSION_SUFFIX --configuration Release --output build --no-build /nodeReuse:false
+              run: dotnet pack "src\OrchardCore\OrchardCore\OrchardCore.csproj" --version-suffix $env:BUILD_VERSION_SUFFIX --configuration Release --output build --no-build /nodeReuse:false
             - name: Publish packages
               shell: powershell
               run: dotnet nuget push "build\OrchardCore.$($env:BUILD_VERSION_SUFFIX).nupkg" --source "https://nuget.pkg.github.com/${{ github.event.repository.owner.name }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }}
