@@ -21,6 +21,8 @@ jobs:
             ORGANIZATION_NAME: ${{ github.event.repository.owner.name }}
         steps:
             - uses: actions/checkout@master
+            - name: Install nuget
+              uses: warrenbuckley/Setup-Nuget@master
             - name: Initialize
               run: |
                 echo .NET Core & dotnet --version & echo.
@@ -43,7 +45,7 @@ jobs:
               run: dotnet pack "src\OrchardCore\OrchardCore\OrchardCore.csproj" --version-suffix $env:BUILD_VERSION_SUFFIX --configuration Release --output build --no-build /nodeReuse:false
             - name: Add GitHub Package Registry as NuGet package source
               shell: powershell
-              run: dotnet nuget sources add -name "GPR" -Source "https://nuget.pkg.github.com/$($env:ORGANIZATION_NAME)/index.json" -Username $($env:ORGANIZATION_NAME) -Password ${{ secrets.GITHUB_TOKEN }}
+              run: nuget sources add -name "GPR" --source "https://nuget.pkg.github.com/$($env:ORGANIZATION_NAME)/index.json" --username $($env:ORGANIZATION_NAME) --password ${{ secrets.GITHUB_TOKEN }}
             - name: Publish packages
               shell: powershell
-              run: dotnet nuget push "build\OrchardCore.$($env:BUILD_VERSION)-$($env:BUILD_VERSION_SUFFIX).nupkg" --source "GPR"
+              run: nuget push "build\OrchardCore.$($env:BUILD_VERSION)-$($env:BUILD_VERSION_SUFFIX).nupkg" --source "GPR"
