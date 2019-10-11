@@ -15,9 +15,10 @@ jobs:
         runs-on: 'windows-latest'
         env:
             BUILD_VERSION: 1.0.0
-            BUILD_VERSION_SUFFIX: gha-10000
+            BUILD_VERSION_SUFFIX: gha-10001
             DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
             DOTNET_CLI_TELEMETRY_OPTOUT: 1
+            GITHUB_REPOSITORY: ${{ GITHUB_REPOSITORY }}
             ORGANIZATION_NAME: ${{ github.event.repository.owner.name }}
         steps:
             - uses: actions/checkout@master
@@ -45,7 +46,7 @@ jobs:
               run: dotnet pack "src\OrchardCore\OrchardCore\OrchardCore.csproj" --version-suffix $env:BUILD_VERSION_SUFFIX --configuration Release --output build --no-build /nodeReuse:false
             - name: Add GitHub Package Registry as NuGet package source
               shell: powershell
-              run: nuget sources add -name "GPR" -source "https://nuget.pkg.github.com/$($env:ORGANIZATION_NAME)/index.json" -username $($env:ORGANIZATION_NAME) -password ${{ secrets.GITHUB_TOKEN }}
+              run: nuget sources add -name "GPR" -source "https://nuget.pkg.github.com/$($env:GITHUB_REPOSITORY)/index.json" -username $($env:ORGANIZATION_NAME) -password ${{ secrets.GITHUB_TOKEN }}
             - name: Publish packages
               shell: powershell
               run: nuget push "build\OrchardCore.$($env:BUILD_VERSION)-$($env:BUILD_VERSION_SUFFIX).nupkg" -source "GPR"
