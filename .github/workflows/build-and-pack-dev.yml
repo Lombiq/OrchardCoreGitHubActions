@@ -18,7 +18,7 @@ jobs:
             BUILD_VERSION_SUFFIX: gha-10001
             DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
             DOTNET_CLI_TELEMETRY_OPTOUT: 1
-            GITHUB_REPOSITORY: ${{ GITHUB_REPOSITORY }}
+            GITHUB_REPOSITORY: ${{ github.repository }}
             ORGANIZATION_NAME: ${{ github.event.repository.owner.name }}
         steps:
             - uses: actions/checkout@master
