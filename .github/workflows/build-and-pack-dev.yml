@@ -43,10 +43,10 @@ jobs:
 #                test-run.cmd
             - name: Package solution
               shell: powershell
-              run: dotnet pack "src\OrchardCore\OrchardCore\OrchardCore.csproj" --version-suffix $env:BUILD_VERSION_SUFFIX --configuration Release --output build --no-build /nodeReuse:false
+              run: dotnet pack "src\OrchardCore\OrchardCore\OrchardCore.csproj" --version-suffix $env:BUILD_VERSION_SUFFIX --configuration Release --output build --no-build /nodeReuse:false /p:NuspecProperties=\"projectUrl=https://github.com/$($env:GITHUB_REPOSITORY)\"
             - name: Add GitHub Package Registry as NuGet package source
               shell: powershell
-              run: nuget sources add -name "GPR" -source "https://nuget.pkg.github.com/$($env:GITHUB_REPOSITORY)/index.json" -username $($env:ORGANIZATION_NAME) -password ${{ secrets.GITHUB_TOKEN }}
+              run: nuget sources add -name "GPR" -source "https://nuget.pkg.github.com/$($env:ORGANIZATION_NAME)/index.json" -username $($env:ORGANIZATION_NAME) -password ${{ secrets.GITHUB_TOKEN }}
             - name: Publish packages
               shell: powershell
               run: nuget push "build\OrchardCore.$($env:BUILD_VERSION)-$($env:BUILD_VERSION_SUFFIX).nupkg" -source "GPR"
