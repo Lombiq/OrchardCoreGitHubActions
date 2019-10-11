@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
-    <PackageProjectUrl>https://github.com/Lombiq/OrchardCoreGitHubActions</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
